@@ -1,0 +1,138 @@
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纸间书摘笔记导入API</title>
+    <link rel="stylesheet" href="./css/main.min.css">
+    <link rel="stylesheet" href="./css/bootstrap-icons/font/bootstrap-icons.css">
+    <script async src="./scripts/upload.js"></script>
+    <script src="./scripts/tip.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expend-md navbar-light pt-1 mb-1 pb-1 bg-white justify-content-center">
+        <div class="container-x1 mb-1">
+            <p class="navbar-brand mb-0">
+                <i class="bi bi-send-check"></i>
+                <span class="fw-bold text-secondary ps-1">
+                    纸间书摘笔记导入API
+                </span>
+            </p>
+        </div>
+    </nav>
+    <div class="container-xl">
+        <div class="container-lg ms-4 mt-0 pd-2 row">
+            <div class="col-5 ps-3 pt-1 ms-5 me-0" id="address"
+                style="border-right-width: 3px; border-right-style: dashed;">
+                <h3 class="text-center fw-bold mb-3">笔记传输</h3>
+                <form>
+                    <label for="IP" class="form-label">移动端IP地址</label>
+                    <div class="mb-4 input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-envelope"></i>
+                        </span>
+                        <input type="text" class="form-control" id="ipInput" placeholder="示例：192.168.1.1">
+                        <span class="input-group-text">
+                            <span class="myTip" data-bs-placement="bottom" title="「纸间书摘」-「用户」-「书摘导入」-「API导入」">
+                                <i class="bi bi-question-circle text-muted"></i>
+                            </span>
+                        </span>
+                    </div>
+
+                    <label for="files" class="form-label">笔记文件</label>
+                    <div class="mb-4 input-group">
+                        <input type="file" class="form-control" id="noteFile" multiple>
+                        <span class="input-group-text">
+                            <span class="myTip" data-bs-placement="bottom" title="使用Ctrl键多选文件">
+                                <i class="bi bi-question-circle text-muted"></i>
+                            </span>
+                        </span>
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-5 p-2 pt-1 pb-0 ps-3 me-1" id="newBook">
+                <h3 class="text-center fw-bold mb-3">新书信息 「选填」</h3>
+                <form class="mb-0">
+                    <div class="row mb-2">
+                        <label for="cover" class="col-sm-2 col-form-label">封面</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-image-fill"></i>
+                                </span>
+                                <input type="Url" class="form-control" id="myCover"></p>
+                                <span class="input-group-text">
+                                    <span class="myTip" data-bs-placement="bottom" title="图床URL">
+                                        <i class="bi bi-question-circle text-muted"></i>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <label for="author" class="col-sm-2 col-form-label">作者</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <input type="text" class="form-control" id="myAuthor">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <label for="translator" class="col-sm-2 col-form-label">译者</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-person-workspace"></i>
+                                </span>
+                                <input type="text" class="form-control" id="myTranslator">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <label for="publisher" class="col-sm-3 col-form-label">出版社</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-briefcase-fill"></i>
+                                </span>
+                                <input type="text" class="form-control" id="myPublisher">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <label for="publishDate" class="col-sm-3 col-form-label">出版日期</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-book"></i>
+                                </span>
+                                <input type="month" class="form-control" id="myPublishDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <label for="isbn" class="col-sm-2 col-form-label">ISBN</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-book"></i>
+                                </span>
+                                <input type="text" class="form-control" id="myISBN">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="container-lg text-center mt-2">
+            <button type="button" class="myTip btn btn-outline-secondary btn-lg" onclick="importBookNotes()" id="importBtn">导入</button>
+        </div>
+    </div>
+</body>
+
+</html>
