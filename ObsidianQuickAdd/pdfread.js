@@ -33,26 +33,86 @@ async function start(e, t) {
     txts = '> ' + txts;
 
     // 获取当前页数
-    const pageNumInput = document.querySelector(".pdf-page-input").value.trim();
+    // const pageNumInput = document.querySelector(".pdf-page-input").value.trim();
+    const activeView = document.querySelector(".mod-active.workspace-leaf");
+    const pageNumInput = activeView.querySelector("input.pdf-page-input").value.trim();
     const pageNum = document
         .querySelector("span.pdf-page-numbers")
         .innerText.split("of")[0]
         .replace("(", "")
         .trim();
 
-    const backlink =
-        pageNum !== null && pageNum !== ""
-            ? `> [[${fileName}.pdf#page=${pageNum}]]`
-            : `> [[${fileName}.pdf#page=${pageNumInput}]]`;
-    txt = txts + '\n' + backlink;
+    // 获取当前选中文字区域的区域定位编码
+    let textRangeStr = "";
+    const selection = window.getSelection();
+    const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+    if (range && !range.collapsed) {
+        const startNodeEl = findTextLayerNode(range.startContainer),
+            endNodeEl = findTextLayerNode(range.endContainer);
+        if (startNodeEl && endNodeEl) {
+            const startNodeIdx = startNodeEl.dataset.idx,
+                endNodeIdx = endNodeEl.dataset.idx,
+                startOffset = getNodeTrueOffset(
+                    startNodeEl,
+                    range.startContainer,
+                    range.startOffset
+                ),
+                endOffset = getNodeTrueOffset(
+                    endNodeEl,
+                    range.endContainer,
+                    range.endOffset
+                );
+            if (null !== startOffset && null !== endOffset) {
+                textRangeStr = ""
+                    .concat(startNodeIdx, ",")
+                    .concat(startOffset, ",")
+                    .concat(endNodeIdx, ",")
+                    .concat(endOffset);
+            }
+        }
+    }
+
+    // const backlink =
+    //     pageNum !== null && pageNum !== ""
+    //         ? `> [[${fileName}.pdf#page=${pageNum}]]`
+    //         : `> [[${fileName}.pdf#page=${pageNumInput}]]`;
+    // txt = txts + '\n' + backlink;
+
+    // 拼接页面链接
+    const pageLink =
+        pageNum && pageNum !== ""
+            ? `${fileName}.pdf#page=${pageNum}`
+            : `${fileName}.pdf#page=${pageNumInput}`;
+    console.log("pageNum", pageNum, "pageNumInput", pageNumInput);
+
+    // 拼接选中区域编码
+    const selectionLink = pageLink.concat(`&selection=${textRangeStr}`);
+
+    // 拼接别名
+    const backlinkAlias = `${selectionLink}|「${fileName}」 第${pageNum ? pageNum : pageNumInput}页`;
+
+    // 生成wiki链接
+    const wikilink = `> [[${backlinkAlias}]]`;
+    // txt = txts.join("\n");
+    // txt = txt.concat(wikilink);
+    txt = txts + '\n' + wikilink;
 
     // 文字再编辑
     let notes = await quickaddApi.wideInputPrompt(
-        "阅读批注",
-        "写下阅读中的思考",
+        "摘录预览",
+        "检查摘录是否正确",
         txt
     );
     if (!notes) return;
+    let myComment = await quickaddApi.wideInputPrompt(
+        "批注",
+        "添加批注\n若无批注直接跳过",
+        ""
+    );
+    if (myComment) {
+        notes += '\n\n' + myComment;
+    };
+    notes += '\n********';
     let title = await quickaddApi.inputPrompt(
         "阅读批注标题为？",
         "默认为文件创建时间",
@@ -78,11 +138,34 @@ async function start(e, t) {
         new Notice("阅读批注创建成功");
     };
 }
+
+function getNodeTrueOffset(node, container, offset) {
+    if (!node.contains(container)) return null;
+    for (
+        var i,
+        iterator = node.doc.createNodeIterator(node, NodeFilter.SHOW_TEXT),
+        length = offset;
+        (i = iterator.nextNode()) && container !== i;
+
+    )
+        length += i.textContent.length;
+    return length;
+}
+
+function findTextLayerNode(node) {
+    if (node.instanceOf(HTMLElement) && node.hasClass("textLayerNode"))
+        return node;
+    for (var i = node; (i = i.parentNode);) {
+        if (i.instanceOf(HTMLElement) && i.hasClass("textLayerNode")) return i;
+    }
+    return null;
+}
+
 module.exports = {
     entry: start,
     settings: {
         name: "readnotes",
-        author: "ZhiJiu (Ling也修改了一点点)",
+        author: "ZhiJiu (Ling做了少量修改)",
         options: {},
     },
 };

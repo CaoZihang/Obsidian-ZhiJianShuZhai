@@ -67,7 +67,7 @@ function createBody(text) {
     body.publishDate = transTime(optionAttr('#myPublishDate'));
     body.isbn = optionAttr('#myISBN').trim();
 
-    const items = notes.split(']]');
+    const items = notes.split('\n********');
     const entries = [];
     if (items.length > 1) {
         for (let i = 0; i < items.length - 1; i++) {
@@ -119,7 +119,7 @@ function getNote(yaml, item) {
     noteTime = transTime(getNoteTime(yaml));
     notePage = getNotePage(item);
     noteText = getNoteText(item);
-    noteNote = null;
+    noteNote = getNoteNote(item);
     noteChapter = null;
 
     let entry = {
@@ -130,7 +130,7 @@ function getNote(yaml, item) {
         time: noteTime
     }
 
-    // console.log(entry);
+    console.log(entry);
 
     if (entry.text === "" && entry.note === "") {
         return null
@@ -156,6 +156,15 @@ function getNoteText(item) {
         return ''
     }
 
+}
+
+function getNoteNote(item) {
+    try {
+        text = item.split(']]')[1].trim();
+        return text
+    } catch (e) {
+        return ''
+    }
 }
 
 function sendRequest(ipAddress, body) {
